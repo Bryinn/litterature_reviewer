@@ -229,4 +229,4 @@ bad/*.html
 bad/*.htm
 
 # Local datastructures
-./review_metadata.json
+/review_metadata.json
