@@ -217,7 +217,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-#Pdfs
+# Pdfs
 *.pdf
 uncategorized/*.html
 uncategorized/*.htm
@@ -227,3 +227,6 @@ good/*.html
 good/*.htm
 bad/*.html
 bad/*.htm
+
+# Local datastructures
+./review_metadata.json
