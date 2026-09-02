@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#Pdfs
+*.pdf
+uncategorized/*.html
+uncategorized/*.htm
+mby/*.html
+mby/*.htm
+good/*.html
+good/*.htm
+bad/*.html
+bad/*.htm

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fieldnotes | Literature review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=darkmode2">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#uncategorized"><span class="brand-mark">F</span><span>fieldnotes</span></a>
+    <div class="topbar-meta"><span class="live-dot"></span><span>local library</span><span class="slash">/</span><span id="paper-count">0 papers</span></div>
+  </header>
+  <main class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-intro"><p class="eyebrow">Your reading room</p><h1>Literature<br><em>review</em></h1><p class="intro-copy">Sort the signal from the noise. Keep the thinking close to the paper.</p></div>
+      <nav class="folder-nav" aria-label="Paper folders">
+        <button class="folder-link active" data-folder="uncategorized"><span class="folder-icon">◎</span><span>Uncategorized</span><strong id="count-uncategorized">0</strong></button>
+        <button class="folder-link" data-folder="good"><span class="folder-icon">✦</span><span>Good fit</span><strong id="count-good">0</strong></button>
+        <button class="folder-link" data-folder="mby"><span class="folder-icon">◐</span><span>Maybe</span><strong id="count-mby">0</strong></button>
+        <button class="folder-link" data-folder="bad"><span class="folder-icon">×</span><span>Not a fit</span><strong id="count-bad">0</strong></button>
+      </nav>
+    </aside>
+    <section class="workspace">
+      <div class="workspace-heading"><div><p class="eyebrow" id="section-kicker">Reading queue</p><h2 id="section-title">Uncategorized</h2></div><div class="heading-stat"><span id="visible-count">0</span><span>papers here</span></div></div>
+      <div class="toolbar"><label class="search-box"><span>⌕</span><input id="search" type="search" placeholder="Search papers..." autocomplete="off"></label><select id="section-filter" aria-label="Filter by tag"><option value="">All tags</option></select><button class="refresh-button" id="refresh" title="Refresh paper list">↻<span>Refresh</span></button></div>
+      <div id="paper-list" class="paper-list" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state" hidden><div class="empty-glyph">⌁</div><h3>No papers here yet</h3><p>Drop PDF or HTM files into this folder and refresh the library.</p></div>
+    </section>
+  </main>
+  <div id="categorize-modal" class="modal-backdrop" hidden data-close="true">
+    <form id="categorize-form" class="modal" aria-labelledby="modal-title">
+      <button type="button" class="modal-close" data-close="true" aria-label="Close dialog">×</button>
+      <p class="eyebrow">Decision desk</p><h2 id="modal-title">Categorize paper</h2><p id="modal-paper-name" class="modal-paper-name"></p>
+      <label class="modal-label" for="modal-note">Key takeaway</label><textarea id="modal-note" rows="4" maxlength="5000" placeholder="What should you remember about this paper?"></textarea>
+        <label class="modal-label" for="modal-doi">DOI</label><input id="modal-doi" class="modal-input" placeholder="10.1234/example.doi" autocomplete="off">
+      <label class="modal-label">Tags</label><div id="tag-choices" class="tag-choices"></div><input id="tag-new" class="modal-input" placeholder="Add a new tag, then press Enter" autocomplete="off">
+      <label class="modal-label" for="modal-category">Category</label><select id="modal-category" class="modal-input" required><option value="">Choose a category...</option><option value="good">Good fit</option><option value="mby">Maybe</option><option value="bad">Not a fit</option><option value="uncategorized">Uncategorized</option></select>
+      <div class="modal-actions"><button type="button" class="cancel-button" data-close="true">Cancel</button><button type="submit" id="modal-submit" class="categorize-button">Save changes</button></div>
+    </form>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/app.js?v=systemopen1"></script>
+</body>
+</html>
