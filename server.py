@@ -75,7 +75,7 @@ def scan_papers() -> list[dict]:
             identifier = paper_id(filename)
             entry = metadata.get(identifier, {})
             tags = entry.get("tags", [entry["section"]] if entry.get("section") else [])
-            doi = detect_doi(path) or entry.get("doi", "")
+            doi = entry.get("doi", "") or detect_doi(path)
             papers.append({
                 "id": identifier,
                 "name": filename,
@@ -83,6 +83,7 @@ def scan_papers() -> list[dict]:
                 "url": f"/files/{folder}/{urllib.parse.quote(filename)}",
                 "filePath": str(path),
                 "fileUrl": path.as_uri(),
+                "alias": entry.get("alias", ""),
                 "note": entry.get("note", ""),
                 "section": tags[0] if tags else "",
                 "tags": tags,
@@ -261,7 +262,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
                     raise FileExistsError(f"{filename} already exists in {target}")
                 if target != source:
                     shutil.move(str(source_path), str(target_path))
-                entry = metadata.setdefault(identifier or paper_id(filename), {})
+                entry = metadata.setdefault(paper_id(filename), {})
                 if "note" in payload:
                     entry["note"] = str(payload["note"])[:5000]
                 if "section" in payload:
@@ -270,9 +271,11 @@ class ReviewHandler(BaseHTTPRequestHandler):
                     entry["tags"] = [str(tag)[:100] for tag in payload["tags"][:20] if str(tag).strip()]
                 if "doi" in payload:
                     entry["doi"] = str(payload["doi"]).strip()[:200]
+                if "alias" in payload:
+                    entry["alias"] = str(payload["alias"]).strip()[:500]
                 entry["updatedAt"] = now_iso()
                 save_metadata(metadata)
-                json_response(self, {"ok": True, "paper": next(p for p in scan_papers() if p["name"] == filename)})
+                json_response(self, {"ok": True, "paper": next(p for p in scan_papers() if p["name"] == filename and p["folder"] == target)})
                 return
             raise ValueError("Unknown endpoint")
         except FileNotFoundError as error:

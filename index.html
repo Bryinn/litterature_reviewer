@@ -34,7 +34,8 @@
   <div id="categorize-modal" class="modal-backdrop" hidden data-close="true">
     <form id="categorize-form" class="modal" aria-labelledby="modal-title">
       <button type="button" class="modal-close" data-close="true" aria-label="Close dialog">×</button>
-      <p class="eyebrow">Decision desk</p><h2 id="modal-title">Categorize paper</h2><p id="modal-paper-name" class="modal-paper-name"></p>
+      <p class="eyebrow">Decision desk</p><h2 id="modal-title">Categorize paper</h2>
+      <label class="modal-label" for="modal-alias">Title / alias</label><input id="modal-alias" class="modal-input" required autocomplete="off">
       <label class="modal-label" for="modal-note">Key takeaway</label><textarea id="modal-note" rows="4" maxlength="5000" placeholder="What should you remember about this paper?"></textarea>
         <label class="modal-label" for="modal-doi">DOI</label><input id="modal-doi" class="modal-input" placeholder="10.1234/example.doi" autocomplete="off">
       <label class="modal-label">Tags</label><div id="tag-choices" class="tag-choices"></div><input id="tag-new" class="modal-input" placeholder="Add a new tag, then press Enter" autocomplete="off">
@@ -43,6 +44,6 @@
     </form>
   </div>
   <div id="toast" class="toast" role="status"></div>
-  <script src="/app.js?v=systemopen1"></script>
+  <script src="/app.js?v=aliasfix1"></script>
 </body>
 </html>

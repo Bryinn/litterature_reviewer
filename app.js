@@ -16,7 +16,11 @@ function showToast(message) {
 }
 
 function filteredPapers() {
-  return state.papers.filter((paper) => paper.folder === state.folder && (!state.search || paper.name.toLowerCase().includes(state.search.toLowerCase())) && (!state.section || (paper.tags || []).includes(state.section)));
+  return state.papers.filter((paper) => {
+    const search = state.search.toLowerCase();
+    const matchesSearch = !search || paper.name.toLowerCase().includes(search) || (paper.alias || '').toLowerCase().includes(search) || (paper.note || '').toLowerCase().includes(search);
+    return paper.folder === state.folder && matchesSearch && (!state.section || (paper.tags || []).includes(state.section));
+  });
 }
 
 function renderCounts() {
@@ -47,7 +51,7 @@ function paperCard(paper) {
   const fileType = paper.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'HTM';
   const action = `<button class="categorize-button" data-action="categorize">${isUncategorized ? 'Categorize' : 'Recategorize / edit'}</button>`;
   return `<article class="paper-card ${paper.lastOpened ? 'last-opened' : ''}" data-id="${paper.id}">
-    <div class="pdf-badge">${fileType}</div><div><h3 class="paper-name">${escapeHtml(paper.actualTitle || readableFilename(paper.name))}</h3><p class="paper-filename">${escapeHtml(paper.name)}</p><p class="paper-location">${folderNames[paper.folder]}</p>${(paper.tags || []).map((tag) => `<span class="section-pill">${escapeHtml(tag)}</span>`).join(' ')}</div>
+    <div class="pdf-badge">${fileType}</div><div><h3 class="paper-name">${escapeHtml(paper.alias || paper.actualTitle || readableFilename(paper.name))}</h3><p class="paper-filename">${escapeHtml(paper.name)}</p>${paper.note ? `<p class="paper-note">${escapeHtml(paper.note)}</p>` : ''}<p class="paper-location">${folderNames[paper.folder]}</p>${(paper.tags || []).map((tag) => `<span class="section-pill">${escapeHtml(tag)}</span>`).join(' ')}</div>
     <div class="paper-actions"><button class="open-button" data-action="open">Open paper ↗</button>${!isUncategorized ? '<button class="citation-button" data-action="citation">Copy BibTeX</button>' : ''}${action}<button class="delete-button" data-action="delete">Delete</button></div>
   </article>`;
 }
@@ -68,7 +72,7 @@ function allTags() { return [...new Set(state.papers.flatMap((paper) => paper.ta
 function openCategorizeModal(paper) {
   $('#categorize-modal').dataset.paperId = paper.id;
   $('#modal-title').textContent = paper.folder === 'uncategorized' ? 'Categorize paper' : 'Recategorize or edit paper';
-  $('#modal-paper-name').textContent = paper.name;
+  $('#modal-alias').value = paper.alias || paper.actualTitle || readableFilename(paper.name);
     $('#modal-note').value = paper.note || '';
     $('#modal-doi').value = paper.doi || '';
   $('#modal-category').value = paper.folder;
@@ -95,11 +99,12 @@ $('#tag-new').addEventListener('keydown', (event) => {
   event.target.value = '';
 });
 $('#categorize-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); const paper = state.papers.find((item) => item.id === $('#categorize-modal').dataset.paperId); const target = $('#modal-category').value;
+  event.preventDefault(); const paper = state.papers.find((item) => item.id === $('#categorize-modal').dataset.paperId); const target = $('#modal-category').value; const alias = $('#modal-alias').value.trim();
   if (!paper || !target) { showToast('Choose a category first'); return; }
+  if (!alias) { showToast('Enter a title or alias'); return; }
   const tags = [...$('#tag-choices').querySelectorAll('input:checked')].map((input) => input.value);
   const button = $('#modal-submit'); button.disabled = true;
-    try { await request('/api/categorize', { method: 'POST', body: JSON.stringify({ id: paper.id, name: paper.name, folder: paper.folder, target, note: $('#modal-note').value, tags, doi: $('#modal-doi').value.trim() }) }); closeCategorizeModal(); showToast(target === paper.folder ? 'Paper details saved' : `Moved to ${folderNames[target]}`); await load(); }
+    try { await request('/api/categorize', { method: 'POST', body: JSON.stringify({ id: paper.id, name: paper.name, folder: paper.folder, target, alias, note: $('#modal-note').value, tags, doi: $('#modal-doi').value.trim() }) }); closeCategorizeModal(); showToast(target === paper.folder ? 'Paper details saved' : `Moved to ${folderNames[target]}`); await load(); }
   catch (error) { showToast(error.message); } finally { button.disabled = false; }
 });
 $('#search').addEventListener('input', (event) => { state.search = event.target.value; render(); });
